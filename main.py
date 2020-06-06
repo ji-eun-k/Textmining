@@ -23,6 +23,7 @@ driver.find_element_by_id('search_btn').click()
 driver.find_element_by_class_name('lnb3').click()
 
 
+
 hi = Kkma()
 doc = konlpy.corpus.kolaw.open('constitution.txt').read()
 nouns = hi.nouns(doc)
