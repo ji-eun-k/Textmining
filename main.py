@@ -1,7 +1,6 @@
 from konlpy.tag import Okt
 import pytagcloud
 import webbrowser
-import random
 from collections import Counter
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -62,21 +61,14 @@ news_noun_adj = []
 for noun_adj in news_tag:
     for word, tag in noun_adj:
         if tag in ['Noun', 'Adjective']:
+            if word == query_txt: #검색어 제외
+                continue
             news_noun_adj.append(word)
 
 counts = Counter(news_noun_adj)
-news_count = counts.most_common(21)
+news_count = counts.most_common(30)
 
-r = lambda: random.randint(0, 255)
-color = lambda: (r(), r(), r())
+taglist = pytagcloud.make_tags(news_count, maxsize=70)
 
-tot_tags = []
-
-for n, c in news_count:
-    if n == query_txt:
-        continue
-    tags = [{'color': color(), 'tag': n, 'size': 3*c}]
-    tot_tags = tot_tags + tags
-
-pytagcloud.create_tag_image(tot_tags, 'word_noun.png', fontname='BMDOHYEON_ttf', size=(600, 400), rectangular=False)
+pytagcloud.create_tag_image(taglist, 'word_noun.png', fontname='BMDOHYEON_ttf', size=(900, 600), rectangular=False)
 webbrowser.open('word_noun.png')
