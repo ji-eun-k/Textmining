@@ -11,7 +11,7 @@ from selenium.common.exceptions import NoSuchElementException
 okt = Okt()
 
 query_txt = input('검색하고 싶은 키워드는 무엇인가요? : ')
-page_num = int(input('몇 개의 페이지를 검색하겠습니까?'))
+page_num = int(input('몇 개의 페이지를 검색하겠습니까? : '))
 
 # 검색 자동화
 path = ".\\chromedriver\\chromedriver.exe"
@@ -19,19 +19,20 @@ driver = webdriver.Chrome(path)
 
 driver.get("https://search.naver.com/search.naver?where=news&sm=tab_jum&query=")
 
-element = driver.find_element_by_id('nx_query')
-element.send_keys(query_txt)
-
-driver.find_element_by_class_name('bt_search').click()
-
 title_list = []
 
 while True:
     try:
+        element = driver.find_element_by_id('nx_query')
+        element.send_keys(query_txt)
+        driver.find_element_by_class_name('bt_search').click()
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
         driver.find_element_by_id('notfound')
-        re_query = input('검색 결과가 없습니다 다시 입력해주세요')
+        query_txt = input('검색 결과가 없습니다 다시 입력해주세요 : ')
+        driver.close()
+        driver = webdriver.Chrome(path)
+        driver.get("https://search.naver.com/search.naver?where=news&sm=tab_jum&query=")
 
     except NoSuchElementException:
         break
@@ -51,6 +52,8 @@ for i in range(page_num):
     except NoSuchElementException:
         break
 
+driver.close()
+
 news_tag = []
 
 for j in title_list:
@@ -68,7 +71,20 @@ for noun_adj in news_tag:
 counts = Counter(news_noun_adj)
 news_count = counts.most_common(30)
 
-taglist = pytagcloud.make_tags(news_count, maxsize=70)
+maxNum = 0
+for word, num in news_count:
+    maxNum += num
+
+print(maxNum//30)
+
+if maxNum//30 >= 50:
+    maxNum = 70
+elif 50 > maxNum//30 >= 20:
+    maxNum = 100
+else:
+    maxNum = 150
+
+taglist = pytagcloud.make_tags(news_count, maxsize=maxNum)
 
 pytagcloud.create_tag_image(taglist, 'word_noun.png', fontname='BMDOHYEON_ttf', size=(900, 600), rectangular=False)
 webbrowser.open('word_noun.png')
