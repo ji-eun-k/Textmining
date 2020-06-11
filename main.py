@@ -71,18 +71,22 @@ for noun_adj in news_tag:
 counts = Counter(news_noun_adj)
 news_count = counts.most_common(30)
 
-maxNum = 0
+maxNum = n = firstNum = 0
 for word, num in news_count:
+    if n == 0:
+        firstNum = num
+        n = 1
     maxNum += num
 
-print(maxNum//30)
+maxNum = maxNum//30
 
-if maxNum//30 >= 50:
-    maxNum = 70
-elif 50 > maxNum//30 >= 20:
+if firstNum - 20 > maxNum >= firstNum - 40:
     maxNum = 100
-else:
+elif firstNum - 40 > maxNum:
     maxNum = 150
+else:
+    maxNum = 70
+
 
 taglist = pytagcloud.make_tags(news_count, maxsize=maxNum)
 
