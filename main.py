@@ -29,8 +29,8 @@ while True:
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
         driver.find_element_by_id('notfound')
-        query_txt = input('검색 결과가 없습니다 다시 입력해주세요 : ')
         driver.close()
+        query_txt = input('검색 결과가 없습니다 다시 입력해주세요 : ')
         driver = webdriver.Chrome(path)
         driver.get("https://search.naver.com/search.naver?where=news&sm=tab_jum&query=")
 
